@@ -13,5 +13,8 @@ import nixpkgsSrc {
  # Makes the config pure as well.
  # See <nixpkgs>/top-level/impure.nix:
  config = { };
- overlays = [ (import ./all-packages.nix) ];
+ overlays = [
+   (import ./all-packages.nix)
+   (import ./overlay-flang.nix)
+ ];
 }
