@@ -15,6 +15,6 @@ import nixpkgsSrc {
  config = { };
  overlays = [
    (import ./all-packages.nix)
-   (import ./overlay-flang.nix)
+   (import ./flang-overlay.nix)
  ];
 }
