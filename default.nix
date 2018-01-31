@@ -8,6 +8,7 @@ in
 		 repo = "nixpkgs";
                  inherit (spec) rev sha256;
                }
+, overlays_ ? []
 }:
 import nixpkgsSrc {
  # Makes the config pure as well.
@@ -17,5 +18,5 @@ import nixpkgsSrc {
    (import ./all-packages.nix)
    (import ./flang-overlay.nix)
    (import ./intel-compilers-overlay.nix)
- ];
+ ] ++ overlays_;
 }
