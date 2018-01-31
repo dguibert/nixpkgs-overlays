@@ -161,9 +161,19 @@ stdenv.mkDerivation {
         ln -s $ldPath/${prefix}as $out/bin/${prefix}as
       fi
 
+      if [ -e $ccPath/${prefix}xiar ]; then
+        ln -s $ldPath/${prefix}xiar $out/bin/${prefix}ar
+      fi
+
     '' + (if !useMacosReexportHack then ''
-      wrap ${prefix}ld ${./ld-wrapper.sh} ''${ld:-$ldPath/${prefix}ld}
-    '' else ''
+      if [ -e $ccPath/xild ]; then
+        wrap ${prefix}xild ${./ld-wrapper.sh} $ccPath/xild
+        ln -s ${prefix}xild $out/bin/${prefix}ld
+      else
+        wrap ${prefix}ld ${./ld-wrapper.sh} ''${ld:-$ldPath/${prefix}ld}
+      fi
+
+'' else ''
       ldInner="${prefix}ld-reexport-delegate"
       wrap "$ldInner" ${./macos-sierra-reexport-hack.bash} ''${ld:-$ldPath/${prefix}ld}
       wrap "${prefix}ld" ${./ld-wrapper.sh} "$out/bin/$ldInner"

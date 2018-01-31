@@ -9,13 +9,16 @@ self: super:
       wrapped = ccWrapperFun {
         cc = unwrapped;
         /* FIXME is this right? */
-        inherit (super.stdenv.cc) libc nativeTools nativeLibc;
-        extraPackages = [ super.which ];
+	inherit (super.stdenv.cc) libc nativeTools nativeLibc;
+	inherit (super) binutils;
+        extraPackages = [ super.which super.binutils ];
         isIntelCompilers = true;
       };
 
       /* Return a modified stdenv that uses Intel compilers */
       stdenv = super.overrideCC super.stdenv wrapped;
+
+      mpi = self.callPackage ./intel-compilers-overlay/mpi.nix { inherit preinstDir version; };
     };
 
     intel-compilers_2016_0_109 = self.intel-compilers "2016.0.109" "/opt/intel/compilers_and_libraries_2016.0.109/linux";

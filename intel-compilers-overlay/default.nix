@@ -79,7 +79,7 @@ self = stdenv.mkDerivation rec {
       echo "#!/bin/sh" > $out/bin/$comp
       echo "export PATH=${gcc}/bin:${gcc.cc}/bin:\$PATH" >> $out/bin/$comp
       echo "source $out/bin/compilervars.sh intel64" >> $out/bin/$comp
-      echo "$comp \"\$@\"" >> $out/bin/$comp
+      echo "$out/bin/intel64/$comp \"\$@\"" >> $out/bin/$comp
       chmod +x $out/bin/$comp
     done
 
