@@ -10,7 +10,7 @@ self: super:
         cc = unwrapped;
         /* FIXME is this right? */
 	inherit (super.stdenv.cc) libc nativeTools nativeLibc;
-	inherit (super) binutils;
+	bintools = super.binutils;
         extraPackages = [ super.which super.binutils ];
         isIntelCompilers = true;
       };

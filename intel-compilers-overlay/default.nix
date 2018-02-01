@@ -91,6 +91,7 @@ self = stdenv.mkDerivation rec {
   passthru = {
     lib = self; # compatibility with gcc, so that `stdenv.cc.cc.lib` works on both                                   
     isIntelCompilers = true;
+    hardeningUnsupportedFlags = [ "stackprotector" ];
     langFortran = true;
   } // stdenv.lib.optionalAttrs stdenv.isLinux {                                                                     
     inherit gcc;
