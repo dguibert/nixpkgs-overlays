@@ -1,123 +1,52 @@
 self: super:
 let
 
-  flangPackages_39 = let
-      callPackages = super.newScope (self // flangPackages_39);
-  in (super.llvmPackages_39 // {
-    version = "3.9.1";
+  flangPackages = llvmPackages: ver: release_version: let
+      callPackages = super.newScope (self // flangPackages_);
+      flangPackages_ = (llvmPackages // {
+        inherit release_version;
+        version = release_version;
 
-    clang-unwrapped = callPackages ./overlay-flang/llvm/3.9/clang { };
+        clang-unwrapped = callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/clang") { };
 
-    clang = if super.stdenv.cc.isGNU then flangPackages_39.libstdcxxClang else flangPackages_39.libcxxClang;
+        clang = if super.stdenv.cc.isGNU then flangPackages_.libstdcxxClang else flangPackages_.libcxxClang;
 
-    libstdcxxClang = flangPackages_39.ccWrapperFun {
-      cc = flangPackages_39.clang-unwrapped;
-      /* FIXME is this right? */
-      inherit (self.stdenv.cc) libc nativeTools nativeLibc;
-      extraPackages = [ super.libstdcxxHook ];
-    };
+        libstdcxxClang = flangPackages_.ccWrapperFun {
+          cc = flangPackages_.clang-unwrapped;
+          /* FIXME is this right? */
+          inherit (self.stdenv.cc) libc nativeTools nativeLibc;
+	  bintools = super.binutils;
+          extraPackages = [ super.libstdcxxHook ];
+        };
 
-    ccWrapperFun = callPackages ./overlay-flang/build-support/cc-wrapper;
+        ccWrapperFun = callPackages ./flang-overlay/build-support/cc-wrapper;
 
-    libcxxClang = flangPackages_39.ccWrapperFun {
-      cc = flangPackages_39.clang-unwrapped;
-      /* FIXME is this right? */
-      inherit (self.stdenv.cc) libc nativeTools nativeLibc;
-      extraPackages = [ flangPackages_39.libcxx flangPackages_39.libcxxabi ];
-    };
+        libcxxClang = flangPackages_.ccWrapperFun {
+          cc = flangPackages_.clang-unwrapped;
+          /* FIXME is this right? */
+          inherit (self.stdenv.cc) libc nativeTools nativeLibc;
+          extraPackages = [ flangPackages_.libcxx flangPackages_.libcxxabi ];
+        };
 
-    flang-unwrapped = callPackages ./overlay-flang/llvm/3.9/flang.nix { };
+        flang-unwrapped = callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/flang.nix") { };
 
-    flang = flangPackages_39.ccWrapperFun {
-      cc = flangPackages_39.clang-unwrapped;
-      /* FIXME is this right? */
-      inherit (self.stdenv.cc) libc nativeTools nativeLibc;
-      extraPackages = [ super.libstdcxxHook flangPackages_39.flang-unwrapped ];
-    };
+        flang = flangPackages_.ccWrapperFun {
+          cc = flangPackages_.clang-unwrapped;
+          /* FIXME is this right? */
+          inherit (self.stdenv.cc) libc nativeTools nativeLibc;
+	  bintools = super.binutils;
+          extraPackages = [ super.libstdcxxHook flangPackages_.flang-unwrapped ];
+        };
 
-    openmp = callPackages ./overlay-flang/llvm/3.9/openmp.nix { };
-  });
+        openmp = callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/openmp.nix") { };
+      });
+    in flangPackages_;
 
-  flangPackages_4 = let
-      callPackages = super.newScope (self // flangPackages_4);
-  in (super.llvmPackages_4 // {
-    version = "4.0.1";
-
-    clang-unwrapped = callPackages ./overlay-flang/llvm/4/clang { };
-
-    clang = if super.stdenv.cc.isGNU then flangPackages_4.libstdcxxClang else flangPackages_4.libcxxClang;
-
-    libstdcxxClang = flangPackages_4.ccWrapperFun {
-      cc = flangPackages_4.clang-unwrapped;
-      /* FIXME is this right? */
-      inherit (self.stdenv.cc) libc nativeTools nativeLibc;
-      extraPackages = [ super.libstdcxxHook ];
-    };
-
-    ccWrapperFun = callPackages ./overlay-flang/build-support/cc-wrapper;
-
-    libcxxClang = flangPackages_4.ccWrapperFun {
-      cc = flangPackages_4.clang-unwrapped;
-      /* FIXME is this right? */
-      inherit (self.stdenv.cc) libc nativeTools nativeLibc;
-      extraPackages = [ flangPackages_4.libcxx flangPackages_4.libcxxabi ];
-    };
-
-    flang-unwrapped = callPackages ./overlay-flang/llvm/4/flang.nix { };
-
-    flang = flangPackages_4.ccWrapperFun {
-      cc = flangPackages_4.clang-unwrapped;
-      /* FIXME is this right? */
-      inherit (self.stdenv.cc) libc nativeTools nativeLibc;
-      extraPackages = [ super.libstdcxxHook flangPackages_4.flang-unwrapped ];
-    };
-
-    openmp = callPackages ./overlay-flang/llvm/4/openmp.nix { };
-  });
-
-  flangPackages_5 = let
-      callPackages = super.newScope (self // flangPackages_5);
-  in (super.llvmPackages_5 // {
-    release_version = "5.0.0";
-    version = flangPackages_5.release_version;
-
-    clang-unwrapped = callPackages ./overlay-flang/llvm/5/clang { };
-
-    clang = if super.stdenv.cc.isGNU then flangPackages_5.libstdcxxClang else flangPackages_5.libcxxClang;
-
-    libstdcxxClang = flangPackages_5.ccWrapperFun {
-      cc = flangPackages_5.clang-unwrapped;
-      /* FIXME is this right? */
-      inherit (self.stdenv.cc) libc nativeTools nativeLibc;
-      extraPackages = [ super.libstdcxxHook ];
-    };
-
-    ccWrapperFun = callPackages ./overlay-flang/build-support/cc-wrapper;
-
-    libcxxClang = flangPackages_5.ccWrapperFun {
-      cc = flangPackages_5.clang-unwrapped;
-      /* FIXME is this right? */
-      inherit (self.stdenv.cc) libc nativeTools nativeLibc;
-      extraPackages = [ flangPackages_5.libcxx flangPackages_5.libcxxabi ];
-    };
-
-    flang-unwrapped = callPackages ./overlay-flang/llvm/5/flang.nix { };
-
-    flang = flangPackages_5.ccWrapperFun {
-      cc = flangPackages_5.clang-unwrapped;
-      /* FIXME is this right? */
-      inherit (self.stdenv.cc) libc nativeTools nativeLibc;
-      extraPackages = [ super.libstdcxxHook flangPackages_5.flang-unwrapped ];
-    };
-
-    openmp = callPackages ./overlay-flang/llvm/5/openmp.nix { };
-  });
 in
 {
   
-  flangPackages_39 = flangPackages_39;
-  flangPackages_4 = flangPackages_4;
-  flangPackages_5 = flangPackages_5;
+  flangPackages_39 = flangPackages super.llvmPackages_39 "39" "3.9.0";
+  flangPackages_4  = flangPackages super.llvmPackages_4  "4" "4.0.1";
+  flangPackages_5  = flangPackages super.llvmPackages_5  "5" "5.0.0";
 
-  flangPackages = flangPackages_4;
 }
