@@ -38,7 +38,8 @@ self: super:
 
     intel-compilers_2018_0_128 = self.intel-compilers "2018.0.128" "/opt/intel/compilers_and_libraries_2018.0.128/linux";
     intel-compilers_2018_1_163 = self.intel-compilers "2018.1.163" "/opt/intel/compilers_and_libraries_2018.1.163/linux";
-    intel-compilers_2018 = self.intel-compilers_2018_1_163;
+    intel-compilers_2018_2_199 = self.intel-compilers "2018.2.199" "/opt/intel/compilers_and_libraries_2018.2.199/linux";
+    intel-compilers_2018 = self.intel-compilers_2018_2_199;
 
     stdenvIntel = self.intel-compilers_2017.stdenv;
 }
