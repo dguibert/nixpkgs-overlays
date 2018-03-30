@@ -12,7 +12,7 @@ let
       owner = "flang-compiler";
       repo = "clang";
       rev = "flang_release_50";
-      sha256 = "0l0r05cf0ig9123kbqkx41d9jdhzh9ppk1llz8n4srkw5ydi0qvj";
+      sha256 = "1frmshwsi5ihpa79zvpvly1mw3rdkf0npn0adf3q7pp70i3j85cw";
     };
     nativeBuildInputs = [ cmake python ]
       ++ stdenv.lib.optional enableManpages python.pkgs.sphinx;
