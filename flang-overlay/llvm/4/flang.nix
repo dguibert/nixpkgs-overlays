@@ -14,7 +14,7 @@ let
       owner = "flang-compiler";
       repo = "flang";
       rev = "master";
-      sha256 = "0832syffyxzywzq669g5s0y3258glli99znzv0dgnljrh9grniav";
+      sha256 = "0qayjr5kc04bi8yanj4k1wviby99j11ka2wbbb00xxy9l3qyrkd6";
     };
 
     cmakeFlags = [
