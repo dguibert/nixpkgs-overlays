@@ -16,6 +16,7 @@ import nixpkgsSrc {
  config = { };
  overlays = [
    (import ./all-packages.nix)
+   (import ./package-tests-overlay.nix)
    (import ./flang-overlay.nix)
    (import ./intel-compilers-overlay.nix)
  ] ++ overlays_;
