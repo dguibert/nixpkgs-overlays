@@ -1,7 +1,7 @@
 {
   "url": "https://github.com/dguibert/nixpkgs",
-  "rev": "369e492083cdd9b24f41be0abb5ed1991882b274",
-  "date": "2018-04-27T17:05:21+02:00",
-  "sha256": "1m8lj0aj1pk5221rwxrirfd8pr7253z86cflyia5fgj2k3f3jzda",
-  "fetchSubmodules": true
+  "rev": "08078e206f947a946a395e67f4e136ffa8a2bac1",
+  "date": "2018-08-18T09:17:17+02:00",
+  "sha256": "16v8azv4lg5w4x1vc0iaxf13r8gc4dgwk33svkakjariih7n8rd4",
+  "fetchSubmodules": false
 }
