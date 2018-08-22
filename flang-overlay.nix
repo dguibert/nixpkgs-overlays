@@ -1,4 +1,5 @@
 self: super:
+with super.lib;
 let
 
   flangPackages = llvmPackages: ver: release_version: let
@@ -25,6 +26,7 @@ let
           cc = flangPackages_.clang-unwrapped;
           /* FIXME is this right? */
           inherit (self.stdenv.cc) libc nativeTools nativeLibc;
+      	  bintools = super.binutils;
           extraPackages = [ flangPackages_.libcxx flangPackages_.libcxxabi ];
         };
 
@@ -34,19 +36,22 @@ let
           cc = flangPackages_.clang-unwrapped;
           /* FIXME is this right? */
           inherit (self.stdenv.cc) libc nativeTools nativeLibc;
-	  bintools = super.binutils;
+	        bintools = super.binutils;
           extraPackages = [ super.libstdcxxHook flangPackages_.flang-unwrapped ];
         };
 
         openmp = callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/openmp.nix") { };
+
+        llvm = mkIf (ver == 6) (callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/llvm.nix") { });
       });
     in flangPackages_;
 
 in
 {
   
-  flangPackages_39 = flangPackages super.llvmPackages_39 "39" "3.9.0";
+  flangPackages_39 = flangPackages super.llvmPackages_39 "39" "3.9.1";
   flangPackages_4  = flangPackages super.llvmPackages_4  "4" "4.0.1";
-  flangPackages_5  = flangPackages super.llvmPackages_5  "5" "5.0.1";
+  flangPackages_5  = flangPackages super.llvmPackages_5  "5" "5.0.2";
+  flangPackages_6  = flangPackages super.llvmPackages_6  "6" "6.0.1";
 
 }
