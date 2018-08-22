@@ -42,7 +42,8 @@ let
 
         openmp = callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/openmp.nix") { };
 
-        llvm = mkIf (ver == 6) (callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/llvm.nix") { });
+        #llvm = mkIf (ver == 6) (callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/llvm.nix") { });
+        llvm = callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/llvm.nix") { };
       });
     in flangPackages_;
 

@@ -177,7 +177,8 @@ stdenv.mkDerivation {
         wrap ${targetPrefix}gfortran ${./cc-wrapper.sh} $ccPath/${targetPrefix}gfortran
         ln -sv ${targetPrefix}gfortran $out/bin/${targetPrefix}g77
         ln -sv ${targetPrefix}gfortran $out/bin/${targetPrefix}f77
-        export named_fc=${targetPrefix}flang
+        export named_fc=${targetPrefix}gfortran
+      fi
       if [ -e $ccPath/${targetPrefix}flang ]; then
         wrap flang ${./cc-wrapper.sh} $ccPath/flang
         export named_fc=${targetPrefix}flang
