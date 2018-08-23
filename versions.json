@@ -1,0 +1,8 @@
+{
+  "nixpkgs": {
+    "owner": "dguibert",
+    "repo": "nixpkgs",
+    "rev": "08078e206f947a946a395e67f4e136ffa8a2bac1",
+    "sha256": "16v8azv4lg5w4x1vc0iaxf13r8gc4dgwk33svkakjariih7n8rd4"
+  }
+}

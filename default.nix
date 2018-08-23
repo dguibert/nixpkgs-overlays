@@ -1,13 +1,17 @@
 let
- _nixpkgs = import <nixpkgs> { config = {}; overlays = []; };
- #nix-prefetch-git https://github.com/dguibert/nixpkgs refs/heads/pu > nixpkgs-src.json
- spec = builtins.fromJSON (builtins.readFile ./nixpkgs-src.json);
+  # https://vaibhavsagar.com/blog/2018/05/27/quick-easy-nixpkgs-pinning/
+  fetcher = { owner, repo, rev, sha256 }: builtins.fetchTarball {
+      inherit sha256;
+        url = "https://github.com/${owner}/${repo}/archive/${rev}.tar.gz";
+      };
+  # ./updater versions.json nixpkgs pu
+  #inherit (import <nixpkgs> {}) lib;
+  #versions = lib.mapAttrs
+  #   (_: fetcher)
+  #     (builtins.fromJSON (builtins.readFile ./versions.json));
+  versions_nixpkgs = fetcher (builtins.fromJSON (builtins.readFile ./versions.json)).nixpkgs;
 in
-{ nixpkgsSrc ? _nixpkgs.fetchFromGitHub {
-		 owner = "dguibert";
-		 repo = "nixpkgs";
-                 inherit (spec) rev sha256;
-               }
+{ nixpkgsSrc ? versions_nixpkgs
 , overlays_ ? []
 }:
 import nixpkgsSrc {
@@ -17,6 +21,7 @@ import nixpkgsSrc {
  overlays = [
    (import ./all-packages.nix)
    (import ./flang-overlay.nix)
+   (import ./slurm-jobs-overlay.nix)
    (import ./intel-compilers-overlay.nix)
  ] ++ overlays_;
 }
