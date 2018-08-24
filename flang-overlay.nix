@@ -3,46 +3,54 @@ with super.lib;
 let
 
   flangPackages = llvmPackages: ver: release_version: let
-      callPackages = super.newScope (self // flangPackages_);
+      #callPackages = super.newScope (self // flangPackages_);
       flangPackages_ = (llvmPackages // {
         inherit release_version;
         version = release_version;
 
-        clang-unwrapped = callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/clang") { };
+        clang-unwrapped = super.callPackage (./. + builtins.toPath "/flang-overlay/llvm/${ver}/clang") {
+          inherit (flangPackages_) version release_version llvm;
+        };
 
         clang = if super.stdenv.cc.isGNU then flangPackages_.libstdcxxClang else flangPackages_.libcxxClang;
 
         libstdcxxClang = flangPackages_.ccWrapperFun {
           cc = flangPackages_.clang-unwrapped;
           /* FIXME is this right? */
-          inherit (self.stdenv.cc) libc nativeTools nativeLibc;
-	  bintools = super.binutils;
+          inherit (super.stdenv.cc) libc nativeTools nativeLibc;
+	        bintools = super.binutils;
           extraPackages = [ super.libstdcxxHook ];
         };
 
-        ccWrapperFun = callPackages ./flang-overlay/build-support/cc-wrapper;
+        ccWrapperFun = super.callPackage ./flang-overlay/build-support/cc-wrapper;
 
         libcxxClang = flangPackages_.ccWrapperFun {
           cc = flangPackages_.clang-unwrapped;
           /* FIXME is this right? */
-          inherit (self.stdenv.cc) libc nativeTools nativeLibc;
+          inherit (super.stdenv.cc) libc nativeTools nativeLibc;
       	  bintools = super.binutils;
           extraPackages = [ flangPackages_.libcxx flangPackages_.libcxxabi ];
         };
 
-        flang-unwrapped = callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/flang.nix") { };
+        flang-unwrapped = super.callPackage (./. + builtins.toPath "/flang-overlay/llvm/${ver}/flang.nix") {
+          inherit (flangPackages_) version openmp llvm clang;
+        };
 
         flang = flangPackages_.ccWrapperFun {
           cc = flangPackages_.clang-unwrapped;
           /* FIXME is this right? */
-          inherit (self.stdenv.cc) libc nativeTools nativeLibc;
+          inherit (super.stdenv.cc) libc nativeTools nativeLibc;
 	        bintools = super.binutils;
           extraPackages = [ super.libstdcxxHook flangPackages_.flang-unwrapped ];
         };
 
-        openmp = callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/openmp.nix") { };
+        openmp = super.callPackage (./. + builtins.toPath "/flang-overlay/llvm/${ver}/openmp.nix") {
+          inherit (flangPackages_) version llvm;
+        };
 
-        llvm = callPackages (./. + builtins.toPath "/flang-overlay/llvm/${ver}/llvm.nix") { };
+        llvm = super.callPackage (./. + builtins.toPath "/flang-overlay/llvm/${ver}/llvm.nix") {
+          inherit (flangPackages_) version release_version;
+        };
       });
     in flangPackages_;
 
