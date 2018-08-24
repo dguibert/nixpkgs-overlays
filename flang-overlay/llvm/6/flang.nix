@@ -2,6 +2,23 @@
 
 let
   gcc = if stdenv.cc.isGNU then stdenv.cc.cc else stdenv.cc.cc.gcc;
+  libpgmath = stdenv.mkDerivation {
+    name = "libpgmath-${version}";
+    buildInputs = [ cmake llvm gcc python ];
+    inherit src;
+    preConfigure = ''
+      # build libpgmath
+      cd runtime/libpgmath
+    '';
+  };
+
+  src = fetchFromGitHub {
+      owner = "flang-compiler";
+      repo = "flang";
+      rev = "master";
+      sha256 = "0rry61hqr6xig7957smdsav375glas2wsg9akyxpxj27rrnax8w5";
+    };
+
   self = stdenv.mkDerivation {
     name = "flang-${version}";
 
@@ -10,12 +27,7 @@ let
 
     NIX_CFLAGS_COMPILE = "-Wno-error=unused-result -Wno-builtin-memcpy-chk-size";
 
-    src = fetchFromGitHub {
-      owner = "flang-compiler";
-      repo = "flang";
-      rev = "master";
-      sha256 = "0rry61hqr6xig7957smdsav375glas2wsg9akyxpxj27rrnax8w5";
-    };
+    inherit src;
 
     cmakeFlags = [
       "-DTARGET_ARCHITECTURE=x86_64" # uname -i
@@ -25,22 +37,12 @@ let
       "-DCMAKE_C_COMPILER=clang"
       "-DCMAKE_Fortran_COMPILER=flang"
       "-DLLVM_CONFIG=${llvm}/bin/llvm-config"
+      "-DLIBPGMATH_LLVM_TOOLS_DIR=${libpgmath}"
     ];
 
     postFixup = ''
       rpath=$(patchelf --print-rpath $out/lib/libflang.so)
       patchelf --set-rpath ${openmp}/lib:$out/lib/libflang.so:$rpath $out/lib/libflang.so
-    '';
-
-    preConfigure = ''
-      # build libpgmath
-      cd runtime/libpgmath
-      mkdir build
-      cd build
-      cmake $cmakeFlags -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON ..
-      make
-      make install
-      cd -
     '';
 
     enableParallelBuilding = true;
