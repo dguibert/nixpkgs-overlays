@@ -23,7 +23,7 @@ let
     name = "flang-${version}";
 
     buildInputs = [ cmake llvm clang python ];
-    propagatedBuildInputs = [ openmp ];
+    propagatedBuildInputs = [ openmp libpgmath ];
 
     NIX_CFLAGS_COMPILE = "-Wno-error=unused-result -Wno-builtin-memcpy-chk-size";
 
@@ -37,7 +37,6 @@ let
       "-DCMAKE_C_COMPILER=clang"
       "-DCMAKE_Fortran_COMPILER=flang"
       "-DLLVM_CONFIG=${llvm}/bin/llvm-config"
-      "-DLIBPGMATH_LLVM_TOOLS_DIR=${libpgmath}"
     ];
 
     postFixup = ''
@@ -50,8 +49,6 @@ let
     passthru = {
       isClang = true;
       langFortran = true;
-      # https://bugs.llvm.org/show_bug.cgi?id=23277#c2
-      hardeningUnsupportedFlags = [ "fortify" ];
       inherit llvm;
     } // stdenv.lib.optionalAttrs stdenv.isLinux {
       inherit gcc;
