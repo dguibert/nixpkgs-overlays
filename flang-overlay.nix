@@ -59,6 +59,6 @@ in
   
   flangPackages_39 = flangPackages super.llvmPackages_39 "39" "3.9.1";
   flangPackages_4  = flangPackages super.llvmPackages_4  "4" "4.0.1";
-  flangPackages_5  = flangPackages super.llvmPackages_5  "5" "5.0.2";
+  flangPackages_5 = super.callPackage ./flang-overlay/llvm/5 { };
   flangPackages_6 = super.callPackage ./flang-overlay/llvm/6 { };
 }

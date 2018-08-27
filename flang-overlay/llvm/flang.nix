@@ -1,23 +1,9 @@
-{ stdenv, fetchFromGitHub, cmake, clang, openmp, llvm, version, python }:
+{ stdenv, fetchFromGitHub, cmake, clang, openmp, llvm, version, python, flang_src, libpgmath }:
 
 let
   gcc = if stdenv.cc.isGNU then stdenv.cc.cc else stdenv.cc.cc.gcc;
-  libpgmath = stdenv.mkDerivation {
-    name = "libpgmath-${version}";
-    buildInputs = [ cmake llvm gcc python ];
-    inherit src;
-    preConfigure = ''
-      # build libpgmath
-      cd runtime/libpgmath
-    '';
-  };
 
-  src = fetchFromGitHub {
-      owner = "flang-compiler";
-      repo = "flang";
-      rev = "master";
-      sha256 = "0rry61hqr6xig7957smdsav375glas2wsg9akyxpxj27rrnax8w5";
-    };
+  src = flang_src;
 
   self = stdenv.mkDerivation {
     name = "flang-${version}";
@@ -40,8 +26,11 @@ let
     ];
 
     postFixup = ''
-      rpath=$(patchelf --print-rpath $out/lib/libflang.so)
-      patchelf --set-rpath ${openmp}/lib:$out/lib/libflang.so:$rpath $out/lib/libflang.so
+      for lib in libflang libflangrti; do
+        rpath=$(patchelf --print-rpath $out/lib/$lib.so)
+        patchelf --set-rpath ${openmp}/lib:$rpath:${libpgmath}/lib/libpgmath.so $out/lib/$lib.so
+        patchelf --replace-needed libpgmath.so ${libpgmath}/lib/libpgmath.so $out/lib/$lib.so
+      done
     '';
 
     enableParallelBuilding = true;

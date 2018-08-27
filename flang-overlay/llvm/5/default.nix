@@ -1,6 +1,6 @@
 { lowPrio, newScope, pkgs, stdenv, cmake, libstdcxxHook
 , libxml2, python, isl, fetchurl, overrideCC, wrapCCWith
-, llvmPackages_6
+, llvmPackages_5
 , fetchFromGitHub
 #, buildLlvmTools # tools, but from the previous stage, for cross
 #, targetLlvmLibraries # libraries, but from the next stage, for cross
@@ -12,7 +12,7 @@
 # forked from pkgs/development/compilers/llvm/6/default.nix
 
 let
-    version = "6.0.1";
+    version = "5.0.2";
     release_version = version;
 
     flang_src = fetchFromGitHub {
@@ -24,7 +24,7 @@ let
 
     libraries  = let
         callPackage = newScope (libraries // { inherit stdenv cmake libxml2 python isl release_version version; });
-      in   llvmPackages_6.libraries.extend (s: p: {
+      in   llvmPackages_5.libraries.extend (s: p: {
           openmp = callPackage ./openmp.nix { };
         });
     tools = let
@@ -59,7 +59,7 @@ let
         inherit cc bintools libc;
       } // extraArgs; in self);
 
-    in llvmPackages_6.tools.extend (s: p: {
+    in llvmPackages_5.tools.extend (s: p: {
         clang-unwrapped = callPackage ./clang { };
         libpgmath = callPackage ../libpgmath.nix { };
         flang-unwrapped = callPackage ../flang.nix { 
@@ -74,7 +74,6 @@ let
           ];
           extraBuildCommands = mkExtraBuildCommands cc;
         };
-        llvm = callPackage ./llvm.nix { };
         clang = if stdenv.cc.isGNU then tools.libstdcxxClang else tools.libcxxClang;
         libstdcxxClang = wrapCCWith rec {
           cc = tools.clang-unwrapped;
