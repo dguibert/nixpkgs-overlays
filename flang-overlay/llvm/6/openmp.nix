@@ -6,15 +6,12 @@ stdenv.mkDerivation {
   src = fetchFromGitHub {
     owner = "llvm-mirror";
     repo = "openmp";
-    rev = "release_39";
-    sha256 = "1pjspkv2lzfyzy2rigdql6rf0akmkc34cq2i955s3wgyhsprj0d8";
+    rev = "release_60";
+    sha256 = "1c8j12344j434fdndmx46kd0habm7jl5lrj29wmsffnc12x9fknf";
   };
 
-  patches = [
-    ./openmp-llvm-LibompExports.cmake.patch
-  ];
-
-  buildInputs = [ cmake llvm perl python gfortran hwloc ];
+  nativeBuildInputs = [ cmake perl ];
+  buildInputs = [ llvm python gfortran hwloc ];
 
   cmakeFlags = [
     "-DCMAKE_CXX_FLAGS=-std=c++11"
@@ -27,10 +24,9 @@ stdenv.mkDerivation {
   enableParallelBuilding = true;
 
   meta = {
-    description = "An OpenMP runtime for the llvm compiler";
-    homepage    = http://llvm.org/;
-    license     = stdenv.lib.licenses.ncsa;
+    description = "Components required to build an executable OpenMP program";
+    homepage    = http://openmp.llvm.org/;
+    license     = stdenv.lib.licenses.mit;
     platforms   = stdenv.lib.platforms.all;
   };
-
 }

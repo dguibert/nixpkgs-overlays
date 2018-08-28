@@ -1,6 +1,8 @@
 #! /usr/bin/env nix-shell
 #! nix-shell -i bash
 #! nix-shell -p curl jq nix
+#! nix-shell -I nixpkgs=.
+## vim: ft=sh :
 ### https://vaibhavsagar.com/blog/2018/05/27/quick-easy-nixpkgs-pinning/
 
 set -eufo pipefail
